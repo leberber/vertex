@@ -155,7 +155,7 @@ layout = dmc.Center(
                             maw = '200px',
                             label="First step",
                             
-                            description=dmc.Box("Upload File this a good wy  to  ohhte"),
+                            description=dmc.Box("Upload Word Doc"),
                             icon=iconify(icon="mynaui:upload-solid"),
                             progressIcon=iconify(icon="mynaui:upload-solid"),
                             completedIcon=iconify(icon="mynaui:upload-solid"),
@@ -191,7 +191,7 @@ layout = dmc.Center(
                         ),
                         dmc.StepperStep(
                             label="Second step",
-                            description="Upload File",
+                            description="Blue Prompts",
                             icon=iconify(icon="fluent:form-multiple-48-regular"),
                             progressIcon=iconify(icon="fluent:form-multiple-48-regular"),
                             completedIcon=iconify(icon="si:fact-check-line"),
@@ -201,7 +201,7 @@ layout = dmc.Center(
                         ),
                         dmc.StepperStep(
                             label="Third step",
-                            description="Upload File",
+                            description="Another Form",
                             icon=iconify(icon="fluent:form-multiple-48-regular"),
                             progressIcon=iconify(icon="fluent:form-multiple-48-regular"),
                             completedIcon=iconify(icon="si:fact-check-line"),
@@ -211,7 +211,7 @@ layout = dmc.Center(
                         ),
                         dmc.StepperStep(
                             label="Fourth step",
-                            description="Verify email",
+                            description="Another Form",
                          icon=iconify(icon="fluent:form-multiple-48-regular"),
                             progressIcon=iconify(icon="fluent:form-multiple-48-regular"),
                             completedIcon=iconify(icon="si:fact-check-line"),
@@ -219,7 +219,7 @@ layout = dmc.Center(
                         ),
                         dmc.StepperStep(
                             label="Final step",
-                            description="Get full access",
+                            description="Review Selection",
                             icon=iconify(icon="material-symbols:lock-outline"),
                             progressIcon=iconify(icon="material-symbols:lock-outline"),
                             completedIcon=iconify(icon="material-symbols:lock-open-outline"),
