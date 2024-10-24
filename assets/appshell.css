@@ -6,6 +6,9 @@
     --app-root-margin-left :var(--navbar-width)
 }
 
+.mantine-Stepper-content{
+    height: 90%;
+}
 .mantine-AppShell-header{
     height: var(--header-height); 
 }
