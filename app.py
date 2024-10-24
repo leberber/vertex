@@ -1,103 +1,143 @@
+
+
+
+from dash import (
+    Dash, html, ALL, dcc, callback, Input, Output, State, 
+    clientside_callback, ClientsideFunction,
+    _dash_renderer, page_registry, page_container, no_update, set_props
+)
+from flask import Flask, request, redirect, session, url_for
+import json, os
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 
-from dash import Dash, _dash_renderer, dcc, callback, Input, Output, State, clientside_callback,  ClientsideFunction, ctx
+from authlib.integrations.flask_client import OAuth
 
+# Internal Imports
+from components.header import header
+from components.sidebar import sidebar
+from utils.helpers import iconify
+from appconfig import stylesheets
 
 _dash_renderer._set_react_version("18.2.0")
 
-min_step = 0
-max_step = 3
-active = 1
+
+ 
+
+# server = Flask(__name__)
+# server.config.update(SECRET_KEY=os.getenv("SECRET_KEY"))
 
 app = Dash(
-    __name__,
-    # suppress_callback_exceptions=True,
-    external_stylesheets=[
-        "https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;900&display=swap"
-    ],   
+    __name__,  use_pages=True,
+    external_stylesheets=stylesheets,
 )
 
-def get_icon(icon):
-    return DashIconify(icon=icon, height=20)
+# server = app.server
+
+# oauth = OAuth(server)
+
+
+
+# app.layout = dmc.MantineProvider(
+#     id="mantine-provider",
+#     children = [
+#         dmc.AppShell(
+#             id="app-shell",
+#             navbar={ "breakpoint": "md", "collapsed": {"mobile": True}},
+#             children = [
+#                 dcc.Location(id="url"),
+#                 dmc.AppShellHeader(header()),
+#                 dmc.AppShellNavbar(sidebar, withBorder=True),
+#                 dmc.AppShellMain(page_container),
+#             ]
+#         )
+#     ]   
+# )
+sidebar = dmc.Box(
+    children = [
+         dmc.NavLink(
+            label="Home",
+            leftSection=iconify(icon="solar:home-2-line-duotone", width = 20),
+            href='/'
+        ),
+        dmc.NavLink(
+            label="Autodrafter",
+            leftSection=iconify(icon="hugeicons:analytics-02", width = 20),
+            href='/autodrafter'
+        ),
+        dmc.NavLink(
+            label="Secret",
+            leftSection=iconify(icon="solar:lock-keyhole-minimalistic-unlocked-line-duotone", width = 20),
+            href='/secret'
+        ),
+
+        ]
+    )
 
 app.layout = dmc.MantineProvider(
     id="mantine-provider",
-    children = [
-        dmc.Container(
-            [
-                dmc.Stepper(
-                    id="stepper-custom-icons",
-                    active=active,
-                     orientation="vertical",
-                    children=[
-                        dmc.StepperStep(
-                            label="First step",
-                            description="Create an account",
-                            icon=get_icon(icon="material-symbols:account-circle"),
-                            progressIcon=get_icon(icon="material-symbols:account-circle"),
-                            completedIcon=get_icon(icon="mdi:account-check"),
-                            children=[
-                                dmc.Text("Step 1 content: Create an account", ta="center")
-                            ],
-                        ),
-                        dmc.StepperStep(
-                            label="Second step",
-                            description="Verify email",
-                            icon=get_icon(icon="ic:outline-email"),
-                            progressIcon=get_icon(icon="ic:outline-email"),
-                            completedIcon=get_icon(
-                                icon="material-symbols:mark-email-read-rounded"
-                            ),
-                            children=[dmc.Text("Step 2 content: Verify email", ta="center")],
-                        ),
-                        dmc.StepperStep(
-                            label="Final step",
-                            description="Get full access",
-                            icon=get_icon(icon="material-symbols:lock-outline"),
-                            progressIcon=get_icon(icon="material-symbols:lock-outline"),
-                            completedIcon=get_icon(icon="material-symbols:lock-open-outline"),
-                            children=[dmc.Text("Step 3 content: Get full access", ta="center")],
-                        ),
-                        dmc.StepperCompleted(
-                            children=[
-                                dmc.Text(
-                                    "Completed, click back button to get to previous step",
-                                    ta="center",
-                                )
-                            ]
-                        ),
-                    ],
+    children=[
+        dmc.Box(
+            sidebar, 
+            id='sidebar', 
+
+        ),
+        dmc.Box(
+            id='container',
+            pos = 'relative',
+            
+            children = [
+                dmc.ActionIcon(
+                    style = {'position':'absolute', 'left':'0px', 'top':'0px' },
+                    size="md",
+                    variant = 'subtle',
+                    id="hide-show-side-bar",
+                    color='gray',
+                    n_clicks=0,
+                    children = iconify(icon = 'hugeicons:menu-02')
                 ),
-                dmc.Group(
-                    justify="center",
-                    mt="xl",
-                    children=[
-                        dmc.Button("Back", id="back-custom-icons", variant="default"),
-                        dmc.Button("Next step", id="next-custom-icons"),
-                    ],
-                ),
+                page_container
             ]
         )
     ]
 )
 
-@callback(
-    Output("stepper-custom-icons", "active"),
-    Input("back-custom-icons", "n_clicks"),
-    Input("next-custom-icons", "n_clicks"),
-    State("stepper-custom-icons", "active"),
-    prevent_initial_call=True,
+
+
+# @callback(
+#    Output("sidebar", "style"),
+#     Output("container", "style"),
+#     Input("hide-show-side-bar", "n_clicks")
+# )
+# def display_output(n_clicks):
+#     print(n_clicks) 
+#     return no_update
+    
+# clientside_callback(
+#     """function maximize_chart(n_clicks) {
+#         console.log(n_clicks)
+#         const no_update = window.dash_clientside.no_update
+#         return no_update
+     
+#     }
+#     """,
+#      Output("sidebar", "style"),
+#     Output("container", "style"),
+#     Input("hide-show-side-bar", "n_clicks"),
+#      prevent_intial_call = True
+ 
+# )
+
+
+clientside_callback(
+    ClientsideFunction(
+        namespace='helpers',
+        function_name='hide_show_sidebar'
+    ),
+Output("sidebar", "style"),
+Output("container", "style"),
+Input("hide-show-side-bar", "n_clicks")
 )
-def update_with_icons(back, next_, current):
-    button_id = ctx.triggered_id
-    step = current if current is not None else active
-    if button_id == "back-custom-icons":
-        step = step - 1 if step > min_step else step
-    else:
-        step = step + 1 if step < max_step else step
-    return step
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host='0.0.0.0', port=8060 )
+    app.run_server(debug=True, port= 8050)
 
